@@ -6,7 +6,7 @@ from torch.utils.data import Subset
 from dataset import *
 
 # data_dir = r"C:\LabAssignment\Final\data"
-data_dir = "" #update this if move "skeleton_data" folder into other folder
+data_dir = r"C:\Users\yeeli\OneDrive\Documents\GitHub\MepiaPipe_hand_tracking" #update this if move "skeleton_data" folder into other folder
 full_dataset = HandSkeleton(data_dir)
 
 train_indices, val_indices = train_test_split(range(len(full_dataset)), test_size=0.2, random_state=22)
@@ -44,12 +44,12 @@ for epoch in range(num_epochs):
     correct_train = 0
     total_train = 0
 
-    for data, labels in train_loader:
+    for face_point, hand_point, labels in train_loader:
         # Move data to device
-        data, labels = data.to(device), labels.to(device)
+        face_point, hand_point, labels = face_point.to(device), hand_point.to(device), labels.to(device)
 
         # Forward pass
-        outputs = model(data)
+        outputs = model(face_point, hand_point)
         loss = criterion(outputs, labels)
 
         # Backward pass and optimization
@@ -73,12 +73,12 @@ for epoch in range(num_epochs):
     total_val = 0
 
     with torch.no_grad():
-        for data, labels in val_loader:
+        for face_point, hand_point, labels in val_loader:
             # Move data to device
-            data, labels = data.to(device), labels.to(device)
+            face_point, hand_point, labels = face_point.to(device), hand_point.to(device), labels.to(device)
 
             # Forward pass
-            outputs = model(data)
+            outputs = model(face_point, hand_point)
             loss = criterion(outputs, labels)
 
             # Track metrics
@@ -95,7 +95,7 @@ for epoch in range(num_epochs):
 
     if epoch%10==9:
         #save last network
-        print('saving net...')
+        print('saving model...')
         torch.save(model.state_dict(), 'hand_skeleton_model.pth')
 
 #Test

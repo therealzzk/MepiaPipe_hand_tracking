@@ -62,10 +62,10 @@ class CNNLSTMModel(nn.Module):
         batch_size, seq_len = face_points.size(0), face_points.size(1)
         
         # Process each frame with the CNN
-        cnn_features = []
+        features = []
         for t in range(seq_len):
-            face_frame = face_points[:, t, :, :]  # Face points at time t
-            hand_frame = hand_points[:, t, :, :]  # Hand points at time t
+            face_frame = face_points[:, t, :].reshape(-1, 33, 4)  # Face points at time t
+            hand_frame = hand_points[:, t, :].reshape(-1, 42, 3)  # Hand points at time t
             frame_features = self.feature_extractor(face_frame, hand_frame)  # Extract features
             features.append(frame_features)
         
