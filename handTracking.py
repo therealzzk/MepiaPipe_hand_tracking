@@ -3,20 +3,60 @@ import mediapipe as mp
 import time
 import os
 
-video_path = "data/001_001_001.mp4"
-cap = cv2.VideoCapture(video_path)
-mpHands = mp.solutions.hands
-hands = mpHands.Hands()
-mpDraw = mp.solutions.drawing_utils
-handLmsStyle = mpDraw.DrawingSpec(color = (0,0,255), thickness = 5)    # hand landmark
-handConStyle = mpDraw.DrawingSpec(color = (0,255,0 ), thickness = 10)  # hand connection
-pTime = 0
-cTime = 0
-frame_counter = 0
+#video_path = "data/001_001_001.mp4"
+#ap = cv2.VideoCapture(video_path)
 
-save_dir = "output_images"
-os.makedirs(save_dir, exist_ok=True)
+# mpHands = mp.solutions.hands
+# hands = mpHands.Hands()
+# mpDraw = mp.solutions.drawing_utils
+# handLmsStyle = mpDraw.DrawingSpec(color = (0,0,255), thickness = 5)    # hand landmark
+# handConStyle = mpDraw.DrawingSpec(color = (0,255,0 ), thickness = 10)  # hand connection
+# pTime = 0
+# cTime = 0
+# frame_counter = 0
 
+data_dir = "data"
+output_dir = "output_images"
+os.makedirs(output_dir, exist_ok=True)
+
+frame_interval = 10
+
+for video_file in os.listdir(data_dir):
+    video_path = os.path.join(data_dir, video_file)
+    if not video_file.lower().endswith(('.mp4')):
+        print(f"Skipping non-video file: {video_file}")
+        continue
+    video_output_dir = os.path.join(output_dir, os.path.splitext(video_file)[0])
+    os.makedirs(video_output_dir,exist_ok=True)
+                                       
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print(f"Could not open video file: {video_path}")
+        continue
+    print(f"Processing video: {video_path}")
+    
+    frame_count = 0
+    saved_frame_count = 0
+
+    while True:
+        ret, frame =  cap.read()
+        if not ret:
+            print(f"Finished processing video: {video_file}")
+            break
+        if frame_count % frame_interval == 0:
+            image_name = f"frame_{frame_count}.jpg"
+            image_path = os.path.join(video_output_dir, image_name)
+            cv2.imwrite(image_path, frame)
+            saved_frame_count += 1
+
+        frame_count += 1
+
+    cap.release()
+    print(f"Saved {saved_frame_count} images for video: {video_file}")
+
+print("All videos processed.")
+
+"""
 while True:
     ret, img =  cap.read()
     if ret:
@@ -53,5 +93,5 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
-
+"""
 
