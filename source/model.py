@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import utils
+import source.utils as utils
 
 class AttentionLayer(nn.Module):
     def __init__(self, hidden_size):
