@@ -5,7 +5,8 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import Subset
 from dataset import *
 
-data_dir = r"C:\LabAssignment\Final\data"
+# data_dir = r"C:\LabAssignment\Final\data"
+data_dir = "" #update this if move "skeleton_data" folder into other folder
 full_dataset = HandSkeleton(data_dir)
 
 train_indices, val_indices = train_test_split(range(len(full_dataset)), test_size=0.2, random_state=22)

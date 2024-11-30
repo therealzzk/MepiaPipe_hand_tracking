@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import source.utils as utils
+import utils 
 
 
 
@@ -21,11 +21,11 @@ class HandSkeleton(Dataset):
         self.train = train
 
         self.skeleton_files = os.listdir(os.path.join(self.data_dir, 'skeleton_data'))
-        self.label_files = os.path.join(self.data_dir, 'labels.json')
+        # self.label_files = os.path.join(self.data_dir, 'labels.json')
 
     def __getitem__(self, idx):
         filename = self.skeleton_files[idx]
-        skeleton_path = os.path.join(self.skeleton_files, filename)
+        skeleton_path = os.path.join(self.data_dir, 'skeleton_data/', filename)
         poses, lefHand, rightHand = utils.process_json_to_arrays(skeleton_path)
 
         #conbine 3 matrix together
@@ -35,7 +35,7 @@ class HandSkeleton(Dataset):
         rightHand_flat = rightHand.reshape(num_frames, -1)  # Shape: (num_frames, 21 * 3)
         combined_data = np.concatenate([poses_flat, lefHand_flat, rightHand_flat], axis=1)  # Shape: (num_frames, 33*4 + 2*21*3)
 
-        label = utils.getLabelbyFilename(filename)
+        label = utils.get_label_by_filename(filename)
 
         #process video skeleton, fix the frame number
 

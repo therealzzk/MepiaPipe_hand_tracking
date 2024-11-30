@@ -13,9 +13,9 @@ def mediapipe_detection(image, model):
 
 
 def get_label_by_filename(filename):
-    if filename.endwith(".mp4"):
+    if filename.endswith(".json"):
         file_id = filename.split("_")[0]
-        label = file_id-1
+        label = int(file_id)-1
 
     return label
 
@@ -66,7 +66,7 @@ def process_json_to_arrays(json_file_path):
         all_poses.append(pose_array)
         all_left_hands.append(left_hand_array)
         all_right_hands.append(right_hand_array)
-        break # test frame 1
+        
 
     # Convert lists of arrays to NumPy arrays for easier handling
     all_poses = np.array(all_poses)  # Shape: (num_frames, 33, 4)
