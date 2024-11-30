@@ -2,9 +2,10 @@ import torch.optim as optim
 from LSTMmodel import *
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
+from torch.utils.data import Subset
 from dataset import *
 
-data_dir = "path/to/your/data"
+data_dir = r"C:\LabAssignment\Final\data"
 full_dataset = HandSkeleton(data_dir)
 
 train_indices, val_indices = train_test_split(range(len(full_dataset)), test_size=0.2, random_state=22)
@@ -20,8 +21,8 @@ learning_rate = 0.001
 batch_size = 16
 num_epochs = 20
 
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 # Create model
 device = 'cuda'
 model = CNNLSTMModel(num_classes=num_classes, 
@@ -90,6 +91,11 @@ for epoch in range(num_epochs):
 
     # Print epoch results
     print(f"Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%")
+
+    if epoch%10==9:
+        #save last network
+        print('saving net...')
+        torch.save(model.state_dict(), 'hand_skeleton_model.pth')
 
 #Test
 #test_dataset = HandSkeleton("path/to/test/data", train=False)
