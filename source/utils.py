@@ -1,6 +1,8 @@
 import json
+import os
 import cv2
 import numpy as np
+import mediapipe as mp
 
 
 def mediapipe_detection(image, model):
@@ -10,6 +12,56 @@ def mediapipe_detection(image, model):
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     return image, result
+
+def getSkeleton(video_name, path_to_file = "test_data"):
+    video_path = os.path.join(path_to_file, f'{video_name}')
+    skeleton_data_path = f'skeleton_test_data/{video_name.replace(".mp4", ".json")}'
+    if os.path.isfile(video_path):
+        print(f"Video path is valid: {video_path}")
+    else:
+        print(f"File not found: {video_path}")
+
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print(f"Error: Could not open video file {video_path}.")
+        exit()
+
+    mpHands = mp.solutions.hands
+    mpHolistic = mp.solutions.holistic
+    hands = mpHands.Hands()
+    holistic = mpHolistic.Holistic(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
+    data = []
+    with open(skeleton_data_path, "w") as file:
+        frame_count = 0
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("End of video or error in reading frames.")
+                break
+            imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            result = holistic.process(imgRGB)
+            hand_result = hands.process(imgRGB)
+            frame_data = {"frame": frame_count, "pose": [], "hands": []}
+
+            #draw pose
+            if result.pose_landmarks:
+                for point_id, lm in enumerate(result.pose_landmarks.landmark):
+                    # x, y, z, visibility = lm.x, lm.y, lm.z, lm.visibility
+                    frame_data["pose"].append([lm.x, lm.y, lm.z, lm.visibility])
+
+            #draw hand
+            if hand_result.multi_hand_landmarks:
+                for hand_id, handLms in enumerate(hand_result.multi_hand_landmarks):
+                    hand_points = [[lm.x, lm.y, lm.z] for lm in handLms.landmark]
+                    frame_data["hands"].append(hand_points)
+
+            data.append(frame_data)
+            frame_count += 1
+
+        cap.release()
+        with open(skeleton_data_path, "w") as json_file:
+            json.dump(data, json_file, indent=4)
+        print(f"Skeleton data saved as: {skeleton_data_path}")
 
 
 def get_label_by_filename(filename):
@@ -41,6 +93,10 @@ def process_json_to_arrays(json_file_path):
             data = json.load(file)
 
      # Initialize arrays to store the results
+    all_poses, all_left_hands, all_right_hands = json_to_array(data)
+    return all_poses, all_left_hands, all_right_hands
+
+def json_to_array(data):
     all_poses = []
     all_left_hands = []
     all_right_hands = []

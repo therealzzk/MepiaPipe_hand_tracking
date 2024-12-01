@@ -20,15 +20,24 @@ class HandSkeleton(Dataset):
         self.data_dir = data_dir
         self.train = train
 
-        self.skeleton_files = [
-            f for f in os.listdir(os.path.join(self.data_dir, 'skeleton_data'))
-            if f.endswith('.json') and os.path.getsize(os.path.join(self.data_dir, 'skeleton_data', f)) > 0
-        ]
+        if self.train:
+            self.skeleton_files = [
+                f for f in os.listdir(os.path.join(self.data_dir, 'skeleton_data'))
+                if f.endswith('.json') and os.path.getsize(os.path.join(self.data_dir, 'skeleton_data', f)) > 0
+            ]
+        else: 
+            self.skeleton_files = [
+                f for f in os.listdir(os.path.join(self.data_dir, 'skeleton_test_data'))
+                if f.endswith('.json') and os.path.getsize(os.path.join(self.data_dir, 'skeleton_test_data', f)) > 0
+            ]
         # self.label_files = os.path.join(self.data_dir, 'labels.json')
 
     def __getitem__(self, idx):
         filename = self.skeleton_files[idx]
-        skeleton_path = os.path.join(self.data_dir, 'skeleton_data/', filename)
+        if self.train ==True:
+            skeleton_path = os.path.join(self.data_dir, 'skeleton_data/', filename)
+        else: 
+            skeleton_path = os.path.join(self.data_dir, 'skeleton_test_data/', filename)
         poses, lefHand, rightHand = utils.process_json_to_arrays(skeleton_path)
 
         #conbine 3 matrix together
