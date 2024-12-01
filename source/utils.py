@@ -104,9 +104,9 @@ def json_to_array(data):
     for frame_data in data:
         # Pose landmarks
         if "pose" in frame_data and frame_data["pose"]:
-            pose_array = np.array(frame_data["pose"])  # Shape: (33, 4)
+            pose_array = np.array(frame_data["pose"])[:, :3]  # Shape: (33, 3)
         else:
-            pose_array = np.zeros((POSE_NUM_POINTS, 4))  # Shape: (33, 4)
+            pose_array = np.zeros((POSE_NUM_POINTS, 3))  # Shape: (33, 3)
 
         # Hand landmarks
         left_hand_array = np.zeros((HAND_NUM_POINTS, 3))  # Default zero array
@@ -117,6 +117,14 @@ def json_to_array(data):
                 left_hand_array = np.array(frame_data["hands"][0])  # First hand
             if len(frame_data["hands"]) == 2:
                 right_hand_array = np.array(frame_data["hands"][1])  # Second hand
+        
+        pose_anchor = pose_array[0]  # First point in pose
+        left_hand_anchor = left_hand_array[0]  # First point in left hand
+        right_hand_anchor = right_hand_array[0]  # First point in right hand
+
+        pose_array -= pose_anchor  # Normalize pose
+        left_hand_array -= left_hand_anchor  # Normalize left hand
+        right_hand_array -= right_hand_anchor
 
         # Append arrays to results
         all_poses.append(pose_array)
@@ -125,7 +133,7 @@ def json_to_array(data):
         
 
     # Convert lists of arrays to NumPy arrays for easier handling
-    all_poses = np.array(all_poses)  # Shape: (num_frames, 33, 4)
+    all_poses = np.array(all_poses)  # Shape: (num_frames, 33, 3)
     all_left_hands = np.array(all_left_hands)  # Shape: (num_frames, 21, 3)
     all_right_hands = np.array(all_right_hands)  # Shape: (num_frames, 21, 3)
 

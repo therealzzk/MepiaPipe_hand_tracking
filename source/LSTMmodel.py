@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class PointFeatureExtractor(nn.Module):
-    def __init__(self, face_feature_dim=4, hand_feature_dim=3, output_size=128):
+    def __init__(self, face_feature_dim=3, hand_feature_dim=3, output_size=128):
         super(PointFeatureExtractor, self).__init__()
         
         # CNN for face points (33 points, 4 features)
@@ -64,7 +64,7 @@ class CNNLSTMModel(nn.Module):
         # Process each frame with the CNN
         features = []
         for t in range(seq_len):
-            face_frame = face_points[:, t, :].reshape(-1, 33, 4)  # Face points at time t
+            face_frame = face_points[:, t, :].reshape(-1, 33, 3)  # Face points at time t
             hand_frame = hand_points[:, t, :].reshape(-1, 42, 3)  # Hand points at time t
             frame_features = self.feature_extractor(face_frame, hand_frame)  # Extract features
             features.append(frame_features)

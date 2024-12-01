@@ -19,8 +19,8 @@ lstm_hidden_size = 128
 lstm_num_layers = 2
 dropout = 0.2
 learning_rate = 0.001
-batch_size = 16
-num_epochs = 20
+batch_size = 32
+num_epochs = 50
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
