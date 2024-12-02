@@ -126,6 +126,14 @@ def json_to_array(data):
         left_hand_array -= left_hand_anchor  # Normalize left hand
         right_hand_array -= right_hand_anchor
 
+        max_distance_pose = np.linalg.norm(pose_array, axis=(1), keepdims=True).max(axis=1)
+        max_distance_left_hand = np.linalg.norm(left_hand_array, axis=(1), keepdims=True).max(axis=1)
+        max_distance_right_hand = np.linalg.norm(right_hand_array, axis=(1), keepdims=True).max(axis=1)
+
+        pose_array = pose_array / (max_distance_pose[:, None] + 1e-8)
+        left_hand_array = left_hand_array / (max_distance_left_hand[:, None] + 1e-8)
+        right_hand_array = right_hand_array / (max_distance_right_hand[:, None] + 1e-8)
+
         # Append arrays to results
         all_poses.append(pose_array)
         all_left_hands.append(left_hand_array)
