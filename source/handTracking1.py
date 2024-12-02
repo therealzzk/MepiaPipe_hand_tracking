@@ -9,15 +9,15 @@ import mediapipe as mp
 # cap = cv2.VideoCapture(0) # using laptop camera
 # video_name = '036_001_004'
 root_dir = os.getcwd()
-data_dir = os.path.join(root_dir, 'lsa64_raw')
+data_dir = os.path.join(root_dir, 'test_data')
+# video_name = ""
 
-
-for video_name in os.listdir(os.path.join(data_dir, 'all')):
+for video_name in os.listdir(data_dir):
     
-    video_path = os.path.join(data_dir, f'all/{video_name}')
+    video_path = os.path.join(data_dir, f'{video_name}')
 
-    output_video_path = os.path.join(data_dir, f'skeleton_video/{video_name}') # Path to save the output video
-    skeleton_data_path = os.path.join(data_dir, f'skeleton_data/{video_name.replace(".mp4", ".json")}')
+    output_video_path =  f'skeleton_test_video/{video_name}'# Path to save the output video
+    skeleton_data_path = f'skeleton_test_data/{video_name.replace(".mp4", ".json")}'
 
     if os.path.isfile(video_path):
         print(f"Video path is valid: {video_path}")
