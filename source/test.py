@@ -41,9 +41,7 @@ criterion = nn.CrossEntropyLoss()
 #create skeleton
 
 
-#utils.getSkeleton("042_test.mp4") #replace the video name to get skeleton of the video
-utils.getSkeleton("042_test_video01.mp4") 
-
+utils.getSkeleton("042_test.mp4") #replace the video name to get skeleton of the video
 test_dataset = HandSkeleton("", train=False)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=0)
 model.load_state_dict(torch.load("hand_skeleton_model_xiaohe_1.pth"))
