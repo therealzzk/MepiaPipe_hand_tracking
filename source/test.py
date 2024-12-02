@@ -40,25 +40,35 @@ criterion = nn.CrossEntropyLoss()
 #Test
 #create skeleton
 
+# for videoName in os.listdir("test_data"):
+#     utils.getSkeleton(f"{videoName}") 
 
-utils.getSkeleton("042_test.mp4") #replace the video name to get skeleton of the video
-test_dataset = HandSkeleton("", train=False)
+utils.getSkeleton("012_test.mp4") 
+
+test_dataset = HandSkeleton("", train=False) 
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=0)
 model.load_state_dict(torch.load("hand_skeleton_model_xiaohe_1.pth"))
 model.eval()
 
-for face_point, hand_point, labels in test_loader:
+for face_point, hand_point, labels, fileName in test_loader:
     # print(f'face_point: {face_point}')
     # print(f'hand_point: {hand_point}')
     print(f'GT_labels: {labels}')
+    print(f'fileName: {fileName[0]}')
     face_point, hand_point, labels = face_point.to(device), hand_point.to(device), labels.to(device)
     outputs = model(face_point, hand_point)
     # loss = criterion(outputs, labels)
 
     pred_output = outputs.detach().cpu().numpy()
-    # print(pred_output)
+    print(pred_output)
     _, predicted = torch.max(outputs, 1)
     print(f'pred_labels: {predicted[0]}')
-    
+    pred_word = utils.getWordById(predicted[0].item())
+    print(f'pred_word: {pred_word}')
+    input_path = f'test_data/{str(fileName[0]).replace(".json", ".mp4")}'
+    output_path = f'skeleton_test_video/{str(fileName[0]).replace(".json", ".mp4")}'
+    utils.addWordToVideo(word = pred_word, input_path=input_path, output_path=output_path)
+    print(f"Done file: {fileName}")
+
 
 print("End test")

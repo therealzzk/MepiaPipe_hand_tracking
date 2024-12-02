@@ -13,6 +13,80 @@ def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     return image, result
 
+def addWordToVideo(word, input_path, output_path):
+    # Open the input video
+    cap = cv2.VideoCapture(input_path)
+    if not cap.isOpened():
+        print(f"Error: Cannot open video file {input_path}")
+        return
+
+    # Get video properties
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use 'mp4v' codec for MP4 files
+
+    # Define the output video writer
+    out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
+
+    # Define text properties
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1
+    color = (255, 255, 255)  # White text
+    thickness = 2
+    mpHands = mp.solutions.hands
+    mpHolistic = mp.solutions.holistic
+
+    hands = mpHands.Hands()
+    holistic = mpHolistic.Holistic(min_detection_confidence = 0.5, min_tracking_confidence = 0.5)
+    mpDraw = mp.solutions.drawing_utils
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break  # Exit loop if no more frames
+
+        # Calculate text position (bottom-center)
+        imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = holistic.process(imgRGB)
+        hand_result = hands.process(imgRGB)
+        text_size = cv2.getTextSize(word, font, font_scale, thickness)[0]
+        text_x = (frame_width - text_size[0]) // 2
+        text_y = frame_height - 10  # 10 pixels above the bottom edge
+
+        # Add the text to the frame
+        cv2.putText(frame, word, (text_x, text_y), font, font_scale, color, thickness)
+
+        #add skeleton
+        if result.pose_landmarks:
+            mpDraw.draw_landmarks(frame, result.pose_landmarks, mpHolistic.POSE_CONNECTIONS)
+
+        #draw hand
+        if hand_result.multi_hand_landmarks:
+            for hand_id, handLms in enumerate(hand_result.multi_hand_landmarks):
+                mpDraw.draw_landmarks(frame,handLms, mpHands.HAND_CONNECTIONS)
+        # Write the frame to the output video
+        out.write(frame)
+
+    # Release resources
+    cap.release()
+    out.release()
+    print(f"Video saved to {output_path}")
+
+
+def getWordById(id):
+    id_str = f"{(id + 1):02d}"
+    json_file_path = "label.json"
+    with open(json_file_path, "r") as file:
+        json_data = json.load(file)
+    # Search for the matching ID
+    for entry in json_data:
+        if entry["ID"] == id_str:
+            return entry["Name"]
+    
+    # return f"No entry found for ID {id}"
+
+
 def getSkeleton(video_name, path_to_file = "test_data"):
     video_path = os.path.join(path_to_file, f'{video_name}')
     skeleton_data_path = f'skeleton_test_data/{video_name.replace(".mp4", ".json")}'

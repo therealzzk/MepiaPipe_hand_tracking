@@ -94,7 +94,7 @@ class HandSkeleton(Dataset):
 
         face_point = torch.tensor(face_point, dtype=torch.float32)
         hand_point = torch.tensor(hand_point, dtype=torch.float32)
-        return face_point, hand_point, label
+        return face_point, hand_point, label, filename
 
 
     def __len__(self):

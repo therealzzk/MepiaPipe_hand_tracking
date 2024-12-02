@@ -44,7 +44,7 @@ for epoch in range(num_epochs):
     correct_train = 0
     total_train = 0
 
-    for face_point, hand_point, labels in train_loader:
+    for face_point, hand_point, labels, _ in train_loader:
         # Move data to device
         face_point, hand_point, labels = face_point.to(device), hand_point.to(device), labels.to(device)
 
@@ -73,7 +73,7 @@ for epoch in range(num_epochs):
     total_val = 0
 
     with torch.no_grad():
-        for face_point, hand_point, labels in val_loader:
+        for face_point, hand_point, labels, _ in val_loader:
             # Move data to device
             face_point, hand_point, labels = face_point.to(device), hand_point.to(device), labels.to(device)
 
