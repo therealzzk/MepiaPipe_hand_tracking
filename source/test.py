@@ -43,7 +43,7 @@ criterion = nn.CrossEntropyLoss()
 
 
 # replace the video name to get skeleton of the video
-utils.getSkeleton("003_test.mp4")
+utils.getSkeleton("022_test.mp4")
 test_dataset = HandSkeleton("", train=False)
 test_loader = DataLoader(test_dataset, batch_size=1,
                          shuffle=False, num_workers=0)
