@@ -42,17 +42,17 @@ criterion = nn.CrossEntropyLoss()
 
 
 #utils.getSkeleton("042_test.mp4") #replace the video name to get skeleton of the video
-utils.getSkeleton("test_video01.mp4") 
+utils.getSkeleton("042_test_video01.mp4") 
 
 test_dataset = HandSkeleton("", train=False)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=0)
-model.load_state_dict(torch.load("hand_skeleton_model.pth"))
+model.load_state_dict(torch.load("hand_skeleton_model_xiaohe_1.pth"))
 model.eval()
 
 for face_point, hand_point, labels in test_loader:
     # print(f'face_point: {face_point}')
     # print(f'hand_point: {hand_point}')
-    print(f'labels: {labels}')
+    print(f'GT_labels: {labels}')
     face_point, hand_point, labels = face_point.to(device), hand_point.to(device), labels.to(device)
     outputs = model(face_point, hand_point)
     # loss = criterion(outputs, labels)
@@ -60,7 +60,7 @@ for face_point, hand_point, labels in test_loader:
     pred_output = outputs.detach().cpu().numpy()
     # print(pred_output)
     _, predicted = torch.max(outputs, 1)
-    print(f'pred_labels: {predicted[0]+1}')
+    print(f'pred_labels: {predicted[0]}')
     
 
 print("End test")
