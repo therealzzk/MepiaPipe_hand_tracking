@@ -11,6 +11,28 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import utils 
+from scipy.interpolate import interp1d
+
+def time_warp(face_points, left_hand_point, right_hand_point, sigma=0.05):
+    original_t = np.linspace(0, 1, face_points.shape[0])  # Sequence length
+    distorted_t = original_t + np.random.normal(0, sigma, size=original_t.shape)
+    distorted_t = np.clip(distorted_t, 0, 1)  # Ensure time stays in range
+
+    distorted_t, unique_indices = np.unique(distorted_t, return_index=True)
+    face_points = face_points[unique_indices]
+    left_hand_point = left_hand_point[unique_indices]
+    right_hand_point = right_hand_point[unique_indices]
+
+    # Interpolate face points and hand points
+    interp_face = interp1d(distorted_t, face_points, axis=0, kind='linear', fill_value="extrapolate")
+    interp_left_hand = interp1d(distorted_t, left_hand_point, axis=0, kind='linear', fill_value="extrapolate")
+    interp_right_hand = interp1d(distorted_t, right_hand_point, axis=0, kind='linear', fill_value="extrapolate")
+    
+    face_points_warped = interp_face(original_t)
+    left_hand_points_warped = interp_left_hand(original_t)
+    right_hand_points_warped = interp_right_hand(original_t)
+    
+    return face_points_warped, left_hand_points_warped, right_hand_points_warped
 
 def scale_points(face_points, left_hand_point, right_hand_point):
     scale_range=(0.5, 3)
@@ -114,6 +136,7 @@ class HandSkeleton(Dataset):
         face_point, left_hand_point, right_hand_point = translate_points(face_point, left_hand_point, right_hand_point)
         face_point, left_hand_point, right_hand_point = rotate_points(face_point, left_hand_point, right_hand_point)
         face_point, left_hand_point, right_hand_point = add_noise(face_point, left_hand_point, right_hand_point)
+        face_point, left_hand_point, right_hand_point = time_warp(face_point, left_hand_point, right_hand_point)
 
         face_anchor = face_point[:, 0:1, :]  # First point in each frame (anchor point)
         face_point -= face_anchor  # Center around anchor
