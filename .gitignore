@@ -1,3 +1,7 @@
 data/
 
 output_images/
+
+skeleton_test_data/
+
+source/_pycache_/
