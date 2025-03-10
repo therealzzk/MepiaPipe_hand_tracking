@@ -89,7 +89,8 @@ def getWordById(id):
 
 def getSkeleton(video_name, path_to_file = "test_data"):
     video_path = os.path.join(path_to_file, f'{video_name}')
-    skeleton_data_path = f'skeleton_test_data/{video_name.replace(".mp4", ".json")}'
+    # skeleton_data_path = f'skeleton_test_data/{video_name.replace(".mp4", ".json")}'
+    skeleton_data_path = f'{video_name.replace(".mp4", ".json")}'
     if os.path.isfile(video_path):
         print(f"Video path is valid: {video_path}")
     else:
@@ -136,6 +137,7 @@ def getSkeleton(video_name, path_to_file = "test_data"):
         with open(skeleton_data_path, "w") as json_file:
             json.dump(data, json_file, indent=4)
         print(f"Skeleton data saved as: {skeleton_data_path}")
+        return data
 
 
 def get_label_by_filename(filename):
