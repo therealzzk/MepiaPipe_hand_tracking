@@ -3,7 +3,7 @@ from LSTMmodel import *
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Subset
-from dataset import *
+from source.dataset import *
 
 # data_dir = r"C:\LabAssignment\Final\data"
 data_dir = r"C:\Users\yeeli\OneDrive\Documents\GitHub\MepiaPipe_hand_tracking" #update this if move "skeleton_data" folder into other folder

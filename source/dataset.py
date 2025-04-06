@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import utils 
+from source import utils
 from scipy.interpolate import interp1d
 
 def time_warp(face_points, left_hand_point, right_hand_point, sigma=0.05):

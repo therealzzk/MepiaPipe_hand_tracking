@@ -4,13 +4,13 @@ from LSTMmodel import *
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Subset
-from dataset import *
+from source.dataset import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--test', action='store_true')
 args = parser.parse_args()
 # data_dir = r"C:\LabAssignment\Final\data"
-data_dir = ""  # update this if move "skeleton_data" folder into other folder
+data_dir = r"D:\756 Proj\756_Team_Proj\MepiaPipe_hand_tracking"  # update this if move "skeleton_data" folder into other folder
 full_dataset = HandSkeleton(data_dir)
 
 train_indices, val_indices = train_test_split(
