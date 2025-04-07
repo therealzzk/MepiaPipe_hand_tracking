@@ -10,18 +10,31 @@
   <form id="upload-form">
     <input type="file" id="video" name="video" accept="video/mp4" required />
     <br /><br />
-    <button type="submit">Upload and Predict</button>
+    <button type="submit">Upload (Containerized)</button>
   </form>
+  <br />
+  <button type="button" id="upload-serverless">Upload (Serverless)</button>
 
   <p id="result"></p>
 
   <script>
     const form = document.getElementById("upload-form");
     const result = document.getElementById("result");
+    const serverlessBtn = document.getElementById("upload-serverless");
 
+    // containerized
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      await uploadToEndpoint("https://hand-skeleton-api-725163779003.us-west1.run.app/predict");
+    });
 
+    // Serverless 
+    serverlessBtn.addEventListener("click", async () => {
+      await uploadToEndpoint("https://us-central1-cmpt756teamproject.cloudfunctions.net/predict");
+    });
+
+
+    async function uploadToEndpoint(endpoint) {
       const videoFile = document.getElementById("video").files[0];
       if (!videoFile) {
         alert("Please select a video file first!");
@@ -34,7 +47,7 @@
       result.textContent = "Uploading and predicting...";
 
       try {
-        const res = await fetch("https://hand-skeleton-api-725163779003.us-west1.run.app/predict", {
+        const res = await fetch(endpoint, {
           method: "POST",
           body: formData
         });
@@ -50,7 +63,7 @@
       } catch (err) {
         result.textContent = `Network Error: ${err.message}`;
       }
-    });
+    }
   </script>
 </body>
 </html>
