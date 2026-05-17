@@ -1,4 +1,4 @@
-# CMPT742-Visual Computing Lab I - Media Hand Tracking
+# MediaPipe Hand Tracking
 ## Dataset: https://facundoq.github.io/datasets/lsa64/
 
 A serverless sign-language translation API deployed on Google Cloud Run. This service uses MediaPipe to process videos containing a single sign-language gesture, detects the hand-skeleton time series, and returns the corresponding textual translation.
