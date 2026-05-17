@@ -97,6 +97,18 @@ You can see use the sign-language translation API here: https://hand-skeleton-ap
    
 ---
 
+## Cloud Run Performance Monitoring
+
+| Metric | Value |
+|---|---:|
+| Average response time | 9.006s |
+| Cold-start latency | 3.914s |
+| Memory usage | 1.052 GiB |
+
+These metrics were collected with Google Cloud Monitoring and used to identify deployment bottlenecks for video-based inference.
+
+---
+
 ## Usage
 
 After deployment, you'll receive a service URL. You can use that URL to open the GUI of sign-language translator.
